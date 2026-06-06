@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BilliardBookingController;
 use Livewire\Livewire;
 use Illuminate\Support\Facades\Response;
 
@@ -18,6 +19,6 @@ Livewire::setScriptRoute(function ($handle) {
 /*
 / END
 */
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [BilliardBookingController::class, 'index'])->name('billiard.index');
+Route::get('/meja/{table}', [BilliardBookingController::class, 'showTable'])->name('billiard.table');
+Route::post('/meja/{table}/booking', [BilliardBookingController::class, 'store'])->name('billiard.booking.store');
