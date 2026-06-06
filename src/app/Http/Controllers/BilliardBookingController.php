@@ -83,7 +83,7 @@ class BilliardBookingController extends Controller
 
         $amount = 50000;
 
-        Booking::create([
+        $booking = Booking::create([
             'billiard_table_id' => $table->id,
             'booking_date' => $request->booking_date,
             'start_time' => $request->start_time,
@@ -96,8 +96,12 @@ class BilliardBookingController extends Controller
             'status' => 'pending',
         ]);
 
+        if ($booking->payment_method === 'transfer') {
+            return redirect()->route('payment.show', $booking);
+        }
+
         return redirect()
             ->route('billiard.table', ['table' => $table, 'date' => $validated['booking_date']])
-            ->with('success', 'Booking berhasil dibuat. Status masih pending sampai dikonfirmasi admin.');
+            ->with('success', 'Booking berhasil dibuat. Silakan bayar cash di kasir.');
     }
 }
