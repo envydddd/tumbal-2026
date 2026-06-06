@@ -68,6 +68,7 @@
         }
     </style>
 </head>
+
 <body>
 <div class="container">
     <p>
@@ -126,19 +127,63 @@
     </div>
 
     <div class="card qris-box">
-        <h2>Scan QRIS</h2>
+        <h2>Pembayaran Online</h2>
 
-        @if ($booking->qris_url)
-            <img src="{{ $booking->qris_url }}" alt="QRIS" style="max-width: 280px; width: 100%;">
+        @if ($booking->payment_status === 'paid')
+            <p><strong>Pembayaran berhasil.</strong></p>
+        @elseif ($booking->snap_token)
+            <p>
+                Klik tombol di bawah untuk membuka pembayaran Midtrans.
+                Pilih metode QRIS pada halaman pembayaran.
+            </p>
+
+            <button id="pay-button" style="
+                padding: 14px 20px;
+                border: none;
+                border-radius: 12px;
+                background: #16a34a;
+                color: white;
+                font-weight: bold;
+                cursor: pointer;
+                font-size: 16px;
+            ">
+                Bayar Sekarang
+            </button>
         @else
-            <div class="dummy-qris"></div>
-            <p><strong>QRIS belum terhubung ke payment gateway.</strong></p>
+            <p><strong>Transaksi Midtrans belum berhasil dibuat.</strong></p>
         @endif
 
-        <p>
-            Scan menggunakan DANA, OVO, GoPay, ShopeePay, atau Mobile Banking.
+        <p style="margin-top: 16px;">
+            <a href="{{ route('payment.show', $booking) }}">
+                Refresh status pembayaran
+            </a>
         </p>
     </div>
 </div>
+@if ($booking->payment_status === 'waiting_payment' && $booking->snap_token)
+    <script
+        src="{{ $isProduction ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}"
+        data-client-key="{{ $midtransClientKey }}">
+    </script>
+
+    <script>
+        document.getElementById('pay-button').addEventListener('click', function () {
+            window.snap.pay('{{ $booking->snap_token }}', {
+                onSuccess: function(result) {
+                    window.location.reload();
+                },
+                onPending: function(result) {
+                    window.location.reload();
+                },
+                onError: function(result) {
+                    alert('Pembayaran gagal.');
+                },
+                onClose: function() {
+                    alert('Kamu menutup popup pembayaran sebelum selesai.');
+                }
+            });
+        });
+    </script>
+@endif
 </body>
 </html>

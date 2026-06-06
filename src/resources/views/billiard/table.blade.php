@@ -83,7 +83,7 @@
                         <input type="text" name="phone_number" placeholder="Nomor telepon" required>
                         <select name="payment_method" required>
                             <option value="cash">Offline / Cash</option>
-                            <option value="transfer">Cashless / Transfer</option>
+                            <option value="transfer">Cashless / QRIS Midtrans</option>
                         </select>
                         <button type="submit">Booking Jam Ini</button>
                     </form>

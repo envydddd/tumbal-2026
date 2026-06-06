@@ -24,6 +24,7 @@ class Booking extends Model
         'payment_url',
         'paid_at',
         'expired_at',
+        'snap_token',
     ];
 
     protected $casts = [
