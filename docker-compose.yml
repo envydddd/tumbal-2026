@@ -8,6 +8,11 @@ services:
     environment:
       - PROJECT_NAME=${PROJECT_NAME}
       - XDEBUG=${XDEBUG:-false}
+      - MIDTRANS_SERVER_KEY=${MIDTRANS_SERVER_KEY}
+      - MIDTRANS_CLIENT_KEY=${MIDTRANS_CLIENT_KEY}
+      - MIDTRANS_IS_PRODUCTION=${MIDTRANS_IS_PRODUCTION:-false}
+      - MIDTRANS_IS_SANITIZED=${MIDTRANS_IS_SANITIZED:-true}
+      - MIDTRANS_IS_3DS=${MIDTRANS_IS_3DS:-true}
     volumes:
       - ./src:/var/www/html
     depends_on:
