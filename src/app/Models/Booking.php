@@ -16,10 +16,21 @@ class Booking extends Model
         'phone_number',
         'payment_method',
         'status',
+        'amount',
+        'payment_status',
+        'payment_reference',
+        'payment_gateway',
+        'qris_url',
+        'payment_url',
+        'paid_at',
+        'expired_at',
     ];
 
     protected $casts = [
         'booking_date' => 'date',
+        'booking_date' => 'date',
+        'paid_at' => 'datetime',
+        'expired_at' => 'datetime',
     ];
 
     public function billiardTable(): BelongsTo

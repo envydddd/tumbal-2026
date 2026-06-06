@@ -81,14 +81,18 @@ class BilliardBookingController extends Controller
                 ->withErrors(['start_time' => 'Slot jam ini sudah dibooking. Pilih jam lain.']);
         }
 
+        $amount = 50000;
+
         Booking::create([
             'billiard_table_id' => $table->id,
-            'booking_date' => $validated['booking_date'],
-            'start_time' => $validated['start_time'],
-            'end_time' => $validated['end_time'],
-            'customer_name' => $validated['customer_name'],
-            'phone_number' => $validated['phone_number'],
-            'payment_method' => $validated['payment_method'],
+            'booking_date' => $request->booking_date,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'customer_name' => $request->customer_name,
+            'phone_number' => $request->phone_number,
+            'payment_method' => $request->payment_method,
+            'amount' => $amount,
+            'payment_status' => $request->payment_method === 'transfer' ? 'waiting_payment' : 'unpaid',
             'status' => 'pending',
         ]);
 
