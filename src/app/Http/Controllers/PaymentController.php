@@ -44,6 +44,13 @@ class PaymentController extends Controller
                 'status' => 'confirmed',
                 'paid_at' => now(),
             ]);
+
+            try {
+                app(\App\Services\WhatsappService::class)
+                    ->sendPaymentSuccessMessage($booking);
+            } catch (\Throwable $e) {
+                report($e);
+            }
         }
 
         return response()->json([

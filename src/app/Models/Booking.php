@@ -28,7 +28,6 @@ class Booking extends Model
 
     protected $casts = [
         'booking_date' => 'date',
-        'booking_date' => 'date',
         'paid_at' => 'datetime',
         'expired_at' => 'datetime',
     ];
