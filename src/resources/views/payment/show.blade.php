@@ -122,14 +122,26 @@
 
         <p style="margin-top: 16px;">
             Status:
-            <span class="status">{{ $booking->payment_status }}</span>
+            <span class="status">
+                @if ($booking->payment_status === 'lunas')
+                    Lunas
+                @elseif ($booking->payment_status === 'menunggu_pembayaran')
+                    Menunggu Pembayaran
+                @elseif ($booking->payment_status === 'belum_lunas')
+                    Belum Lunas
+                @elseif ($booking->payment_status === 'gagal')
+                    Gagal
+                @else
+                    {{ $booking->payment_status }}
+                @endif
+            </span>
         </p>
     </div>
 
     <div class="card qris-box">
         <h2>Pembayaran Online</h2>
 
-        @if ($booking->payment_status === 'paid')
+        @if ($booking->payment_status === 'lunas')
             <p><strong>Pembayaran berhasil.</strong></p>
         @elseif ($booking->snap_token)
             <p>
@@ -160,7 +172,7 @@
         </p>
     </div>
 </div>
-@if ($booking->payment_status === 'waiting_payment' && $booking->snap_token)
+@if ($booking->payment_status === 'menunggu_pembayaran' && $booking->snap_token)
     <script
         src="{{ $isProduction ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}"
         data-client-key="{{ $midtransClientKey }}">

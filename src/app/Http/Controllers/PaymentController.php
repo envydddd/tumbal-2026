@@ -15,7 +15,7 @@ class PaymentController extends Controller
 
         if (
             $booking->payment_method === 'transfer'
-            && $booking->payment_status === 'waiting_payment'
+            && $booking->payment_status === 'menunggu_pembayaran'
             && empty($booking->snap_token)
         ) {
             $transaction = $midtransService->createSnapTransaction($booking);
@@ -67,7 +67,7 @@ class PaymentController extends Controller
 
         if ($transactionStatus === 'settlement' || ($transactionStatus === 'capture' && $fraudStatus === 'accept')) {
             $booking->update([
-                'payment_status' => 'paid',
+                'payment_status' => 'lunas',
                 'status' => 'confirmed',
                 'paid_at' => now(),
             ]);
@@ -75,13 +75,13 @@ class PaymentController extends Controller
 
         if ($transactionStatus === 'pending') {
             $booking->update([
-                'payment_status' => 'waiting_payment',
+                'payment_status' => 'menunggu_pembayaran',
             ]);
         }
 
         if (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
             $booking->update([
-                'payment_status' => 'failed',
+                'payment_status' => 'gagal',
                 'status' => 'cancelled',
             ]);
         }

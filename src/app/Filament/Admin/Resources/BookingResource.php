@@ -37,6 +37,15 @@ class BookingResource extends Resource
                 'cash' => 'Offline / Cash',
                 'transfer' => 'Cashless / Transfer',
             ])->required(),
+            Forms\Components\Select::make('payment_status')
+                ->label('Status Pembayaran')
+                ->options([
+                    'belum_lunas' => 'Belum Lunas',
+                    'menunggu_pembayaran' => 'Menunggu Pembayaran',
+                    'lunas' => 'Lunas',
+                    'gagal' => 'Gagal',
+                ])
+                ->required(),
             Forms\Components\Select::make('status')->options([
                 'pending' => 'Pending',
                 'confirmed' => 'Confirmed',
@@ -57,6 +66,23 @@ class BookingResource extends Resource
                 Tables\Columns\TextColumn::make('start_time')->label('Mulai'),
                 Tables\Columns\TextColumn::make('end_time')->label('Selesai'),
                 Tables\Columns\TextColumn::make('payment_method')->label('Bayar')->badge(),
+                Tables\Columns\TextColumn::make('payment_status')
+                    ->label('Status Pembayaran')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'belum_lunas' => 'Belum Lunas',
+                        'menunggu_pembayaran' => 'Menunggu Pembayaran',
+                        'lunas' => 'Lunas',
+                        'gagal' => 'Gagal',
+                        default => $state,
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'belum_lunas' => 'gray',
+                        'menunggu_pembayaran' => 'warning',
+                        'lunas' => 'success',
+                        'gagal' => 'danger',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('status')->badge()->color(fn (string $state): string => match ($state) {
                     'confirmed' => 'success',
                     'cancelled' => 'danger',
@@ -65,11 +91,22 @@ class BookingResource extends Resource
             ])
             ->defaultSort('booking_date', 'desc')
             ->filters([
-                Tables\Filters\SelectFilter::make('status')->options([
-                    'pending' => 'Pending',
-                    'confirmed' => 'Confirmed',
-                    'cancelled' => 'Cancelled',
-                ]),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status Booking')
+                    ->options([
+                        'pending' => 'Pending',
+                        'confirmed' => 'Confirmed',
+                        'cancelled' => 'Cancelled',
+                    ]),
+
+                Tables\Filters\SelectFilter::make('payment_status')
+                    ->label('Status Pembayaran')
+                    ->options([
+                        'belum_lunas' => 'Belum Lunas',
+                        'menunggu_pembayaran' => 'Menunggu Pembayaran',
+                        'lunas' => 'Lunas',
+                        'gagal' => 'Gagal',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
