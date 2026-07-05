@@ -10,6 +10,12 @@ use App\Http\Controllers\PaymentController;
 / Livewire asset handling if using sub folder in domain
 */
 
+Route::get('/api/webhook/midtrans', function () {
+    return response()->json([
+        'message' => 'Midtrans webhook endpoint is active',
+    ], 200);
+});
+
 Livewire::setUpdateRoute(function ($handle) {
     return Route::post(config('app.asset_prefix') . '/livewire/update', $handle);
 });

@@ -13,7 +13,6 @@ return [
     | a conventional file to locate the various service credentials.
     |
     */
-
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
@@ -34,5 +33,8 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
+    'fonnte' => [
+        'token' => env('FONNTE_TOKEN'),
+        'admin_number' => env('ADMIN_WHATSAPP_NUMBER'),
+    ],
 ];

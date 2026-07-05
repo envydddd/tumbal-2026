@@ -13,6 +13,8 @@ services:
       - MIDTRANS_IS_PRODUCTION=${MIDTRANS_IS_PRODUCTION:-false}
       - MIDTRANS_IS_SANITIZED=${MIDTRANS_IS_SANITIZED:-true}
       - MIDTRANS_IS_3DS=${MIDTRANS_IS_3DS:-true}
+      - FONNTE_TOKEN=${FONNTE_TOKEN}
+      - ADMIN_WHATSAPP_NUMBER=${ADMIN_WHATSAPP_NUMBER}
     volumes:
       - ./src:/var/www/html
     depends_on:

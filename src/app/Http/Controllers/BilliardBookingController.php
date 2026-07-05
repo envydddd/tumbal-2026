@@ -92,7 +92,7 @@ class BilliardBookingController extends Controller
             'phone_number' => $request->phone_number,
             'payment_method' => $request->payment_method,
             'amount' => $amount,
-            'payment_status' => $request->payment_method === 'transfer' ? 'waiting_payment' : 'unpaid',
+            'payment_status' => $request->payment_method === 'transfer' ? 'menunggu_pembayaran' : 'belum_lunas',
             'status' => 'pending',
         ]);
 

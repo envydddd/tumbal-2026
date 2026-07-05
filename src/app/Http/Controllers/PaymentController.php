@@ -6,6 +6,8 @@ use App\Models\Booking;
 use App\Services\MidtransService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Services\WhatsappService;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -15,7 +17,7 @@ class PaymentController extends Controller
 
         if (
             $booking->payment_method === 'transfer'
-            && $booking->payment_status === 'menunggu_pembayaran'
+            && in_array($booking->payment_status, ['waiting_payment', 'menunggu_pembayaran'])
             && empty($booking->snap_token)
         ) {
             $transaction = $midtransService->createSnapTransaction($booking);
@@ -24,6 +26,7 @@ class PaymentController extends Controller
                 'payment_gateway' => 'midtrans',
                 'payment_reference' => $transaction['order_id'],
                 'snap_token' => $transaction['snap_token'],
+                'payment_status' => 'menunggu_pembayaran',
                 'expired_at' => now()->addMinutes(30),
             ]);
 
@@ -39,6 +42,7 @@ class PaymentController extends Controller
 
     public function midtransNotification(Request $request)
     {
+        Log::info('MIDTRANS WEBHOOK MASUK', $request->all());
         $serverKey = config('midtrans.server_key');
 
         $orderId = $request->input('order_id');
@@ -69,8 +73,44 @@ class PaymentController extends Controller
             $booking->update([
                 'payment_status' => 'lunas',
                 'status' => 'confirmed',
-                'paid_at' => now(),
+                'paid_at' => $booking->paid_at ?: now(),
             ]);
+
+            $whatsappService = app(WhatsappService::class);
+
+            if (! $booking->customer_whatsapp_sent_at) {
+                try {
+                    $sentToCustomer = $whatsappService->sendToCustomer($booking);
+
+                    if ($sentToCustomer) {
+                        $booking->update([
+                            'customer_whatsapp_sent_at' => now(),
+                        ]);
+                    }
+                } catch (\Throwable $e) {
+                    Log::error('Failed to send WhatsApp notification to customer.', [
+                        'booking_id' => $booking->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
+
+            if (! $booking->admin_whatsapp_sent_at) {
+                try {
+                    $sentToAdmin = $whatsappService->sendToAdmin($booking);
+
+                    if ($sentToAdmin) {
+                        $booking->update([
+                            'admin_whatsapp_sent_at' => now(),
+                        ]);
+                    }
+                } catch (\Throwable $e) {
+                    Log::error('Failed to send WhatsApp notification to admin.', [
+                        'booking_id' => $booking->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
+            }
         }
 
         if ($transactionStatus === 'pending') {

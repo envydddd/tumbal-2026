@@ -25,12 +25,16 @@ class Booking extends Model
         'paid_at',
         'expired_at',
         'snap_token',
+        'customer_whatsapp_sent_at',
+        'admin_whatsapp_sent_at',
     ];
 
     protected $casts = [
         'booking_date' => 'date',
         'paid_at' => 'datetime',
         'expired_at' => 'datetime',
+        'customer_whatsapp_sent_at' => 'datetime',
+        'admin_whatsapp_sent_at' => 'datetime',
     ];
 
     public function billiardTable(): BelongsTo
