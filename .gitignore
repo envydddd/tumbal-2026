@@ -9,6 +9,5 @@ src/node_modules/
 .DS_Store
 # Environment files
 .env
-src/.env
 src/storage/logs/*.log
 src/vendor/
